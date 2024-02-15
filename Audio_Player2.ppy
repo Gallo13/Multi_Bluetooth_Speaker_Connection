@@ -1,33 +1,25 @@
-import os
-import time
+import pydub
 from pydub import AudioSegment
-from pycse import AudioDevice
+import pycse
 
-# Define the audio files
-file1 = "audio_file1.mp3"
-file2 = "audio_file2.mp3"
+# Load the audio file
+audio = AudioSegment.from_file("audio_file.mp3")
 
-# Load the audio files
-audio1 = AudioSegment.from_file(file1)
-audio2 = AudioSegment.from_file(file2)
+# Split the audio file into two separate files
+first_half = audio[:len(audio)//2]
+second_half = audio[len(audio)//2:]
 
-# Concatenate the audio files
-combined = audio1 + audio2
+# Save the split audio files
+first_half.export("first_half.mp3", format="mp3")
+second_half.export("second_half.mp3", format="mp3")
 
-# Define the Bluetooth speakers
-speaker1 = AudioDevice('{0000111e-0000-1000-8000-00805f9b34fb}', 'Speaker 1')
-speaker2 = AudioDevice('{0000111e-0000-1000-8000-00805f9b34fb}', 'Speaker 2')
+# Connect to the Bluetooth speakers
+speaker1 = pycse.AudioDevice('{0000111e-0000-1000-8000-00805f9b34fb}', 'Speaker 1')
+speaker2 = pycse.AudioDevice('{0000111e-0000-1000-8000-00805f9b34fb}', 'Speaker 2')
 
-# Connect to the speakers
-speaker1.connect()
-speaker2.connect()
-
-# Play the combined audio on both speakers
-speaker1.play(combined)
-speaker2.play(combined)
-
-# Wait for the audio to finish playing
-time.sleep(combined.duration_seconds)
+# Play the split audio files on each speaker
+speaker1.play("first_half.mp3")
+speaker2.play("second_half.mp3")
 
 # Disconnect from the speakers
 speaker1.disconnect()
@@ -36,5 +28,5 @@ speaker2.disconnect()
 # replace 'Speaker 1' and 'Speaker 2' with the actual names of your Bluetooth speakers
 
 """
-There are also third-party libraries, such as pyglet and pygame, that provide more advanced audio capabilities, including multi-channel audio and synchronization.
+Pair the bluetooth speakers with the computer before running the code.
 """
